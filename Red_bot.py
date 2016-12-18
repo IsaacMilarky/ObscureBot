@@ -83,10 +83,10 @@ def graph(xAxis,yAxis,words):
     plt.show()
 
 def prompt(dir):
-    choice = raw_input("Do you want to enter new words(y/n): ")
+    choice = input("Do you want to enter new words(y/n): ")
     if choice == 'y':
         user_input = open(dir,"a+")
-        searchform = raw_input("Please enter in search terms(with spaces between): ")
+        searchform = input("Please enter in search terms(with spaces between): ")
         list = searchform.split()
         for term in list:
             user_input.write(str(term) + "\n")
@@ -110,9 +110,9 @@ def prompt(dir):
 '''
 choice = ''
 while True:
-    choice = raw_input("Do you have a specific text file of terms to check for (y/n): ")
+    choice = input("Do you have a specific text file of terms to check for (y/n): ")
     if choice == 'y':
-        directory = raw_input("Enter the directory of the file: ")
+        directory = input("Enter the directory of the file: ")
         words = prompt(directory)
         break
     elif choice == 'n':
@@ -150,8 +150,8 @@ def is_a_sub_real(sub):
 
 #asks user for subreddit and how many posts to search through.
 while True:
-    sub = raw_input("What subreddit should I search?: ")
-    postlim = raw_input("How many posts should I look through?: ")
+    sub = input("What subreddit should I search?: ")
+    postlim = input("How many posts should I look through?: ")
 
     #If user inputs a typo or is an idiot it gives them another chance
     if not is_a_sub_real(sub) and not postlim > 0:
@@ -176,12 +176,12 @@ for term in words:
     #adds row frequency data to freq to use later in the graph.
     freq.append(findFrequency(data,term))
     #clears screen
-    #os.system("cls")
+    os.system('cls' if os.name == 'nt' else 'clear')
     #Increments percentage counter so the user isnt looking at a blank screen
     #for 20+ minutes
     print (str(float(i / len(words) * 100)) + "%  complete")
     i += 1
-#os.system("cls")
+os.system('cls' if os.name == 'nt' else 'clear')
 #prints raw data
 #print(words)
 #print(freq)
