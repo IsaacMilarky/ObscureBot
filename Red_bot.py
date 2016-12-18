@@ -67,8 +67,7 @@ def findFrequency(networkData,searchWord):
                 #increments i for frequncy determined by term_detection
                 i += term_detection(comment.body,term)
             except AttributeError:
-                #prob should get rid of this
-                print("Comment limit reached")
+                print("")
     return i
 
 #Graph function written by Pete using matplotlib and pychart
