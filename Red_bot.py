@@ -6,11 +6,26 @@
 #time is no longer used in program but was used for testing
 #matplotlib's pyplot was used to graph findFrequency
 #numpy also used for graphing purposes
+import pip
 import os
-import praw
 import time
-import matplotlib.pyplot as plt
-import numpy as np
+
+def install(package):
+    pip.main(['install', package])
+
+try:
+    import praw
+
+except ImportError:
+    install(praw)
+    import praw
+try:
+    import matplotlib.pyplot as plt
+    import numpy as np
+except ImportError:
+    install(matplotlib)
+    import matplotlib.pyplot as plt
+    import numpy as np
 
 
 def arraywords(dir):
@@ -103,7 +118,7 @@ while True:
 #don't ask
 reddit = praw.Reddit(client_id='IcZ2s5Xu1eTCRw',
 client_secret='hIjaSArp-M7YAkd2gFgHQIJgOYg',
-user_agent='Windows:ObscureBot:1.1 (by /u/CakeHD)',
+user_agent='Windows:ObscureBot:1.2 (by /u/CakeHD)',
 username='Obscurebot',
 password='greengoblin')
 
