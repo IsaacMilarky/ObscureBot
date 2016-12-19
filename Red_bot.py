@@ -12,21 +12,31 @@ import time
 
 def install(package):
     pip.main(['install', package])
+"""
+def install(name):
+    subprocess.call(['pip', 'install', name])
+"""
 
 try:
     import praw
 
 except ImportError:
-    install(praw)
-    import praw
+    install("praw")
+
+import praw
+
 try:
     import matplotlib.pyplot as plt
+except ImportError:
+    install("matplotlib")
+
+import matplotlib.pyplot as plt
+try:
     import numpy as np
 except ImportError:
-    install(matplotlib)
-    import matplotlib.pyplot as plt
-    import numpy as np
+    install("numpy")
 
+import numpy as np
 
 words = []
 
