@@ -59,7 +59,11 @@ def findFrequency(networkData,searchWord):
         #used for testing in early period
         #print(submission.title)
         #print("--------------------------------------------------------------")
+        i += term_detection(submission.title,searchWord)
+        #Prevents the MoreComments object from causing any trouble
+        #by removing it if it is encountered.
 
+        submission.comments.replace_more(limit=0)
         #iterates through comments in top x submissons
         for comment in submission.comments:
             #was throwing an error when comment chains were too longer
@@ -67,9 +71,11 @@ def findFrequency(networkData,searchWord):
             #this fixes the problems
             try:
                 #increments i for frequncy determined by term_detection
-                i += term_detection(comment.body,term)
+                i += term_detection(comment.body,searchWord)
+            #Made a fix on line 64 that should make it sou that
+            #this exception should never happen but you never know
             except AttributeError:
-                print("")
+                print("MoreCommntsError: Tell the programmers!")
     return i
 
 #Graph function written by Pete using matplotlib and pychart
@@ -178,7 +184,7 @@ for term in words:
     #clears screen
     os.system('cls' if os.name == 'nt' else 'clear')
     #Increments percentage counter so the user isnt looking at a blank screen
-    #for 20+ minutes
+    #for 20+ minutess
     print (str(float(i / len(words) * 100)) + "%  complete")
     i += 1
 os.system('cls' if os.name == 'nt' else 'clear')
