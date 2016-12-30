@@ -138,7 +138,17 @@ while True:
         print("try again")
 
 
-
+while True:
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print("Please enter how you would like to sort posts.")
+    try:
+        sortChoice = input("Choices = \'top\' \'hot\' \'controversial\' \'new\': ")
+        if sortChoice == "top" or sortChoice == "hot" or sortChoice == "controversial" or sortChoice == "new":
+            break
+        else:
+            print("Please enter in a valid sort choice. ")
+    except NameError:
+        print("NameError: Please enter in a valid sort choice.")
 
 # logs into reddit and creates reddit instance
 #instance is not in read only mode so in theory we could manipulate
@@ -186,21 +196,58 @@ freq = []
 i = 0.0
 
 #iterates through the array created from list.txt
-for term in words:
-    #initializes subreddit and how mant posts to go through
-    data = reddit.subreddit(sub).hot(limit = int(postlim))
-    #adds row frequency data to freq to use later in the graph.
-    freq.append(findFrequency(data,term))
-    #clears screen
-    os.system('cls' if os.name == 'nt' else 'clear')
-    #Increments percentage counter so the user isnt looking at a blank screen
-    #for 20+ minutess
-    print (str(float(i / len(words) * 100)) + "%  complete")
-    i += 1
+if sortChoice == "top":
+    for term in words:
+        #initializes subreddit and how mant posts to go through
+        data = reddit.subreddit(sub).top(limit = int(postlim))
+        #adds row frequency data to freq to use later in the graph.
+        freq.append(findFrequency(data,term))
+        #clears screen
+        os.system('cls' if os.name == 'nt' else 'clear')
+        #Increments percentage counter so the user isnt looking at a blank screen
+        #for 20+ minutess
+        print (str(float((i + 1) / len(words) * 100)) + "%  complete")
+        i += 1
+if sortChoice == "hot":
+    for term in words:
+        #initializes subreddit and how mant posts to go through
+        data = reddit.subreddit(sub).hot(limit = int(postlim))
+        #adds row frequency data to freq to use later in the graph.
+        freq.append(findFrequency(data,term))
+        #clears screen
+        os.system('cls' if os.name == 'nt' else 'clear')
+        #Increments percentage counter so the user isnt looking at a blank screen
+        #for 20+ minutess
+        print (str(float(i / len(words) * 100)) + "%  complete")
+        i += 1
+if sortChoice == "controversial":
+    for term in words:
+        #initializes subreddit and how mant posts to go through
+        data = reddit.subreddit(sub).controversial(limit = int(postlim))
+        #adds row frequency data to freq to use later in the graph.
+        freq.append(findFrequency(data,term))
+        #clears screen
+        os.system('cls' if os.name == 'nt' else 'clear')
+        #Increments percentage counter so the user isnt looking at a blank screen
+        #for 20+ minutess
+        print (str(float(i / len(words) * 100)) + "%  complete")
+        i += 1
+if sortChoice == "new":
+    for term in words:
+        #initializes subreddit and how mant posts to go through
+        data = reddit.subreddit(sub).new(limit = int(postlim))
+        #adds row frequency data to freq to use later in the graph.
+        freq.append(findFrequency(data,term))
+        #clears screen
+        os.system('cls' if os.name == 'nt' else 'clear')
+        #Increments percentage counter so the user isnt looking at a blank screen
+        #for 20+ minutess
+        print (str(float(i / len(words) * 100)) + "%  complete")
+        i += 1
 os.system('cls' if os.name == 'nt' else 'clear')
 #prints raw data
-#print(words)
-#print(freq)
+print(words)
+print(freq)
 
 #uses raw data and puts it in a pretty graph.
 graph(np.asarray(list(range(0,len(words)))),np.asarray(freq),words)
