@@ -11,6 +11,8 @@ import os
 import time
 
 def install(package):
+    if package != type(str):
+        package = str(package)
     pip.main(['install', package])
 """
 def install(name):
