@@ -1,9 +1,7 @@
-#PLEASE UPDATE VERSION NUMBER IF YOU MAKE SIGNIFICANT PROGRESS
 #to find obscurity
 #imports libraries
 #os is used to clear console for percentage meter
 #praw is the reddit api
-#time is no longer used in program but was used for testing
 #matplotlib's pyplot was used to graph findFrequency
 #numpy also used for graphing purposes
 import pip
@@ -11,8 +9,6 @@ import os
 import time
 
 def install(package):
-    if package != type(str):
-        package = str(package)
     pip.main(['install', package])
 """
 def install(name):
@@ -39,6 +35,12 @@ except ImportError:
     install("numpy")
 
 import numpy as np
+
+try:
+    import progressbar
+except ImportError:
+    install("progressbar2")
+import progressbar
 
 words = []
 
@@ -220,7 +222,7 @@ if sortChoice == "hot":
         os.system('cls' if os.name == 'nt' else 'clear')
         #Increments percentage counter so the user isnt looking at a blank screen
         #for 20+ minutess
-        print (str(float(i / len(words) * 100)) + "%  complete")
+        print (str(float((i + 1) / len(words) * 100)) + "%  complete")
         i += 1
 if sortChoice == "controversial":
     for term in words:
@@ -232,7 +234,7 @@ if sortChoice == "controversial":
         os.system('cls' if os.name == 'nt' else 'clear')
         #Increments percentage counter so the user isnt looking at a blank screen
         #for 20+ minutess
-        print (str(float(i / len(words) * 100)) + "%  complete")
+        print (str(float((i + 1) / len(words) * 100)) + "%  complete")
         i += 1
 if sortChoice == "new":
     for term in words:
@@ -244,7 +246,7 @@ if sortChoice == "new":
         os.system('cls' if os.name == 'nt' else 'clear')
         #Increments percentage counter so the user isnt looking at a blank screen
         #for 20+ minutess
-        print (str(float(i / len(words) * 100)) + "%  complete")
+        print (str(float((i + 1)/ len(words) * 100)) + "%  complete")
         i += 1
 os.system('cls' if os.name == 'nt' else 'clear')
 #prints raw data
