@@ -8,6 +8,9 @@ import pip
 import os
 import time
 
+#set if debug mode is on or not
+CONST_DEBUG = False
+
 def install(package):
     pip.main(['install', package])
 """
@@ -66,30 +69,35 @@ def term_detection(string,term):
             occurances += 1
     return occurances
 
-def findFrequency(networkData,searchWord):
+def findFrequency(networkData,searchWord,postlimit):
     i = 0
+    j = 0
     #iterates through the top x posts in a given subreddit decided earlier
-    for submission in networkData:
-        #used for testing in early period
-        #print(submission.title)
-        #print("--------------------------------------------------------------")
-        i += term_detection(submission.title,searchWord)
-        #Prevents the MoreComments object from causing any trouble
-        #by removing it if it is encountered.
+    with progressbar.ProgressBar(max_value=int(postlimit)) as bar:
+        for submission in networkData:
+            #used for testing in early period
+            #print(submission.title)
+            #print("--------------------------------------------------------------")
+            i += term_detection(submission.title,searchWord)
+            #Prevents the MoreComments object from causing any trouble
+            #by removing it if it is encountered.
 
-        submission.comments.replace_more(limit=0)
-        #iterates through comments in top x submissons
-        for comment in submission.comments:
-            #was throwing an error when comment chains were too longer
-            #apparently some comments have the attribute "MoreComments"
-            #this fixes the problems
-            try:
-                #increments i for frequncy determined by term_detection
-                i += term_detection(comment.body,searchWord)
-            #Made a fix on line 64 that should make it sou that
-            #this exception should never happen but you never know
-            except AttributeError:
-                print("MoreCommntsError: Tell the programmers!")
+            submission.comments.replace_more(limit=0)
+            #iterates through comments in top x submissons
+            for comment in submission.comments:
+                #was throwing an error when comment chains were too longer
+                #apparently some comments have the attribute "MoreComments"
+                #this fixes the problems
+                try:
+                    #increments i for frequncy determined by term_detection
+                    i += term_detection(comment.body,searchWord)
+                #Made a fix on line 64 that should make it sou that
+                #this exception should never happen but you never know
+                except AttributeError:
+                    print("MoreCommntsError: Tell the programmers!")
+            j += 1
+            bar.update(j)
+    os.system("cls" if os.name == "nt" else "clear")
     return i
 
 #Graph function written by Pete using matplotlib and pychart
@@ -103,7 +111,8 @@ def graph(xAxis,yAxis,words):
     plt.show()
 
 def prompt(dir):
-    choice = input("Do you want to enter new words(y/n): ")
+    if not CONST_DEBUG:
+        choice = input("Do you want to enter new words(y/n): ")
     if choice == 'y':
         user_input = open(dir,"a+")
         searchform = input("Please enter in search terms(with spaces between): ")
@@ -129,30 +138,34 @@ def prompt(dir):
         prompt(dir)
 '''
 choice = ''
-while True:
-    choice = input("Do you have a specific text file of terms to check for (y/n): ")
-    if choice == 'y':
-        directory = input("Enter the directory of the file: ")
-        words = prompt(directory)
-        break
-    elif choice == 'n':
-        words = prompt("list.txt")
-        break
-    else:
-        print("try again")
-
-
-while True:
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print("Please enter how you would like to sort posts.")
-    try:
-        sortChoice = input("Choices = \'top\' \'hot\' \'controversial\' \'new\': ")
-        if sortChoice == "top" or sortChoice == "hot" or sortChoice == "controversial" or sortChoice == "new":
+if  not CONST_DEBUG:
+    while True:
+        choice = input("Do you have a specific text file of terms to check for (y/n): ")
+        if choice == 'y':
+            directory = input("Enter the directory of the file: ")
+            words = prompt(directory)
+            break
+        elif choice == 'n':
+            words = prompt("list.txt")
             break
         else:
-            print("Please enter in a valid sort choice. ")
-    except NameError:
-        print("NameError: Please enter in a valid sort choice.")
+            print("try again")
+
+
+    while True:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print("Please enter how you would like to sort posts.")
+        try:
+            sortChoice = input("Choices = \'top\' \'hot\' \'controversial\' \'new\': ")
+            if sortChoice == "top" or sortChoice == "hot" or sortChoice == "controversial" or sortChoice == "new":
+                break
+            else:
+                print("Please enter in a valid sort choice. ")
+        except NameError:
+            print("NameError: Please enter in a valid sort choice.")
+else:
+    words = arraywords("list.txt")
+    sortChoice = "top"
 
 # logs into reddit and creates reddit instance
 #instance is not in read only mode so in theory we could manipulate
@@ -177,77 +190,96 @@ def is_a_sub_real(sub):
     #returns true if program succeeds.
     return True
 
+if not CONST_DEBUG:
+    #asks user for subreddit and how many posts to search through.
+    while True:
+        sub = input("What subreddit should I search?: ")
+        postlim = input("How many posts should I look through?: ")
 
-#asks user for subreddit and how many posts to search through.
-while True:
-    sub = input("What subreddit should I search?: ")
-    postlim = input("How many posts should I look through?: ")
-
-    #If user inputs a typo or is an idiot it gives them another chance
-    if not is_a_sub_real(sub) and not postlim > 0:
-        if not is_a_sub_real(sub):
-            print("ERROR: Sub is either empty  or does not exist!")
-        elif not postlim > 0:
-            print("ERROR: Post limit is too small!")
+        #If user inputs a typo or is an idiot it gives them another chance
+        if not is_a_sub_real(sub) and not postlim > 0:
+            if not is_a_sub_real(sub):
+                print("ERROR: Sub is either empty  or does not exist!")
+            elif not postlim > 0:
+                print("ERROR: Post limit is too small!")
+            else:
+                print("Two(2) ERRORs Occured: Sub doesnt exist and post limit is too small!")
         else:
-            print("Two(2) ERRORs Occured: Sub doesnt exist and post limit is too small!")
-    else:
-        break
-
+            break
+else:
+    sub = "wholesomememes"
+    postlim = "10"
+#with progressbar.ProgressBar(max_value=10) as bar:
 freq = []
 
 #variable used for percentage counter.
 i = 0.0
-
 #iterates through the array created from list.txt
 if sortChoice == "top":
-    for term in words:
-        #initializes subreddit and how mant posts to go through
-        data = reddit.subreddit(sub).top(limit = int(postlim))
-        #adds row frequency data to freq to use later in the graph.
-        freq.append(findFrequency(data,term))
-        #clears screen
-        os.system('cls' if os.name == 'nt' else 'clear')
-        #Increments percentage counter so the user isnt looking at a blank screen
-        #for 20+ minutess
-        print (str(float((i + 1) / len(words) * 100)) + "%  complete")
-        i += 1
+    #clears screen
+    os.system('cls' if os.name == 'nt' else 'clear')
+    with progressbar.ProgressBar(max_value=len(words)) as bar:
+        for term in words:
+            #initializes subreddit and how mant posts to go through
+            print("----------General-Progress(above)----------------Post-Progress(below)---------------------------------")
+            data = reddit.subreddit(sub).top(limit = int(postlim))
+            #adds row frequency data to freq to use later in the graph.
+            freq.append(findFrequency(data,term,postlim))
+            #Increments percentage counter so the user isnt looking at a blank screen
+            #for 20+ minutess
+            #print (str(float((i + 1) / len(words) * 100)) + "%  complete")
+            bar.update(i)
+            i += 1
+            #os.system('cls' if os.name == 'nt' else 'clear')
 if sortChoice == "hot":
-    for term in words:
-        #initializes subreddit and how mant posts to go through
-        data = reddit.subreddit(sub).hot(limit = int(postlim))
-        #adds row frequency data to freq to use later in the graph.
-        freq.append(findFrequency(data,term))
-        #clears screen
-        os.system('cls' if os.name == 'nt' else 'clear')
-        #Increments percentage counter so the user isnt looking at a blank screen
-        #for 20+ minutess
-        print (str(float((i + 1) / len(words) * 100)) + "%  complete")
-        i += 1
+    #clears screen
+    os.system('cls' if os.name == 'nt' else 'clear')
+    with progressbar.ProgressBar(max_value=10) as bar:
+        for term in words:
+            #initializes subreddit and how mant posts to go through
+            data = reddit.subreddit(sub).hot(limit = int(postlim))
+            print("----------General-Progress(above)----------------Post-Progress(below)---------------------------------")
+            #adds row frequency data to freq to use later in the graph.
+            freq.append(findFrequency(data,term,postlim))
+            #Increments percentage counter so the user isnt looking at a blank screen
+            #for 20+ minutess
+            #print (str(float((i + 1) / len(words) * 100)) + "%  complete")
+            bar.update(i)
+            i += 1
+            #os.system('cls' if os.name == 'nt' else 'clear')
 if sortChoice == "controversial":
-    for term in words:
-        #initializes subreddit and how mant posts to go through
-        data = reddit.subreddit(sub).controversial(limit = int(postlim))
-        #adds row frequency data to freq to use later in the graph.
-        freq.append(findFrequency(data,term))
-        #clears screen
-        os.system('cls' if os.name == 'nt' else 'clear')
-        #Increments percentage counter so the user isnt looking at a blank screen
-        #for 20+ minutess
-        print (str(float((i + 1) / len(words) * 100)) + "%  complete")
-        i += 1
+    #clears screen
+    os.system('cls' if os.name == 'nt' else 'clear')
+    with progressbar.ProgressBar(max_value=10) as bar:
+        for term in words:
+            #initializes subreddit and how mant posts to go through
+            data = reddit.subreddit(sub).controversial(limit = int(postlim))
+            print("----------General-Progress(above)----------------Post-Progress(below)---------------------------------")
+            #adds row frequency data to freq to use later in the graph.
+            freq.append(findFrequency(data,term,postlim))
+            #Increments percentage counter so the user isnt looking at a blank screen
+            #for 20+ minutess
+            #print (str(float((i + 1) / len(words) * 100)) + "%  complete")
+            bar.update(i)
+            i += 1
+            #os.system('cls' if os.name == 'nt' else 'clear')
 if sortChoice == "new":
-    for term in words:
-        #initializes subreddit and how mant posts to go through
-        data = reddit.subreddit(sub).new(limit = int(postlim))
-        #adds row frequency data to freq to use later in the graph.
-        freq.append(findFrequency(data,term))
-        #clears screen
-        os.system('cls' if os.name == 'nt' else 'clear')
-        #Increments percentage counter so the user isnt looking at a blank screen
-        #for 20+ minutess
-        print (str(float((i + 1)/ len(words) * 100)) + "%  complete")
-        i += 1
+    #clears screen
+    os.system('cls' if os.name == 'nt' else 'clear')
+    with progressbar.ProgressBar(max_value=10) as bar:
+        for term in words:
+            #initializes subreddit and how mant posts to go through
+            data = reddit.subreddit(sub).new(limit = int(postlim))
+            print("----------General-Progress(above)----------------Post-Progress(below)---------------------------------")
+            #adds row frequency data to freq to use later in the graph.
+            freq.append(findFrequency(data,term,postlim))
+            #Increments percentage counter so the user isnt looking at a blank screen
+            #for 20+ minutess
+            #print (str(float((i + 1)/ len(words) * 100)) + "%  complete")
+            bar.update(i)
+
+            i += 1
+            #os.system('cls' if os.name == 'nt' else 'clear')
 os.system('cls' if os.name == 'nt' else 'clear')
 #prints raw data
 print(words)
