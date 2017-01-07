@@ -190,22 +190,25 @@ def is_a_sub_real(sub):
     #returns true if program succeeds.
     return True
 
+
 if not CONST_DEBUG:
     #asks user for subreddit and how many posts to search through.
     while True:
         sub = input("What subreddit should I search?: ")
         postlim = input("How many posts should I look through?: ")
-
         #If user inputs a typo or is an idiot it gives them another chance
-        if not is_a_sub_real(sub) and not postlim > 0:
-            if not is_a_sub_real(sub):
-                print("ERROR: Sub is either empty  or does not exist!")
-            elif not postlim > 0:
-                print("ERROR: Post limit is too small!")
+        try:
+            if not is_a_sub_real(sub) or not int(postlim) > 0:
+                if not is_a_sub_real(sub):
+                    print("ERROR: Sub is either empty  or does not exist!")
+                elif not postlim > 0:
+                    print("ERROR: Post limit is too small!")
+                else:
+                    print("Two(2) ERRORs Occured: Sub doesnt exist and post limit is too small!")
             else:
-                print("Two(2) ERRORs Occured: Sub doesnt exist and post limit is too small!")
-        else:
-            break
+                break
+        except ValueError:
+            print("ERROR: Invalid postlimit!")
 else:
     sub = "wholesomememes"
     postlim = "10"
