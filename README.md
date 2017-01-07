@@ -6,6 +6,7 @@ USED Libraries:
   praw
   matplotlib
   pyplot
+  progressbar2
 
 This bot was created by Isaac Milarsky with the help of Pete Canfield.
 Originally uploaded on 12/18/16
