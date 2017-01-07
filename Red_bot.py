@@ -9,7 +9,7 @@ import os
 import time
 
 #set if debug mode is on or not
-CONST_DEBUG = False
+CONST_DEBUG = True
 
 def install(package):
     pip.main(['install', package])
@@ -213,7 +213,7 @@ else:
 freq = []
 
 #variable used for percentage counter.
-i = 0.0
+i = 1.0
 #iterates through the array created from list.txt
 if sortChoice == "top":
     #clears screen
