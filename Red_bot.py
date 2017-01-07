@@ -9,7 +9,7 @@ import os
 import time
 
 #set if debug mode is on or not
-CONST_DEBUG = True
+CONST_DEBUG = False
 
 def install(package):
     pip.main(['install', package])
@@ -234,7 +234,7 @@ if sortChoice == "top":
 if sortChoice == "hot":
     #clears screen
     os.system('cls' if os.name == 'nt' else 'clear')
-    with progressbar.ProgressBar(max_value=10) as bar:
+    with progressbar.ProgressBar(max_value=len(words)) as bar:
         for term in words:
             #initializes subreddit and how mant posts to go through
             data = reddit.subreddit(sub).hot(limit = int(postlim))
@@ -250,7 +250,7 @@ if sortChoice == "hot":
 if sortChoice == "controversial":
     #clears screen
     os.system('cls' if os.name == 'nt' else 'clear')
-    with progressbar.ProgressBar(max_value=10) as bar:
+    with progressbar.ProgressBar(max_value=len(words)) as bar:
         for term in words:
             #initializes subreddit and how mant posts to go through
             data = reddit.subreddit(sub).controversial(limit = int(postlim))
@@ -266,7 +266,7 @@ if sortChoice == "controversial":
 if sortChoice == "new":
     #clears screen
     os.system('cls' if os.name == 'nt' else 'clear')
-    with progressbar.ProgressBar(max_value=10) as bar:
+    with progressbar.ProgressBar(max_value=len(words)) as bar:
         for term in words:
             #initializes subreddit and how mant posts to go through
             data = reddit.subreddit(sub).new(limit = int(postlim))
